@@ -8,14 +8,14 @@ public class Review {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "User is required")
     private String user;
 
-    @NotBlank
+    @NotBlank(message = "Book title is required")
     private String book;
 
-    @Min(1)
-    @Max(10)
+    @Min(value = 1, message = "Rating must be at least 1")
+    @Max(value = 10, message = "Rating must be at most 10")
     private int rating;
 
     public Review() {
