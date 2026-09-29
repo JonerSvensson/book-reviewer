@@ -38,6 +38,16 @@ public class ReviewRepository {
         return review;
     }
 
+    public Optional<Review> update(Long id, Review updatedReview) {
+        Optional<Review> existing = findById(id);
+        existing.ifPresent(review -> {
+            review.setUser(updatedReview.getUser());
+            review.setBook(updatedReview.getBook());
+            review.setRating(updatedReview.getRating());
+        });
+        return existing;
+    }
+
     public boolean deleteById(Long id) {
         return reviews.removeIf(review -> review.getId().equals(id));
     }

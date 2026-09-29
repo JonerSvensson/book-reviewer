@@ -34,4 +34,9 @@ public class ReviewService {
             throw new ResourceNotFoundException("Review not found with id " + id);
         }
     }
+
+    public Review updateReview(Long id, Review review) {
+        return reviewRepository.update(id, review)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found with id " + id));
+    }
 }
