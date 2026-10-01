@@ -77,4 +77,50 @@ class ReviewControllerTest {
         mockMvc.perform(delete("/api/reviews/99"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void returnBadRequestWhenUserIsBlank() throws Exception {
+        String jsonRequest = "{ \"user\": \"\", \"book\": \"The Hitchhiker's Guide to the Galaxy\", \"rating\": 10 }";
+
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.user").value("User is required"));
+
+        verify(reviewService, never()).createReview(any(Review.class));
+    }
+
+    @Test
+    void returnBadRequestWhenBookIsBlank() throws Exception {
+        String jsonRequest = "{ \"user\": \"Jonas\", \"book\": \"\", \"rating\": 10 }";
+
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.book").value("Book title is required"));
+    }
+
+    @Test
+    void returnBadRequestWhenRatingIsTooLow() throws Exception {
+        String jsonRequest = "{ \"user\": \"Jonas\", \"book\": \"Dune\", \"rating\": 0 }";
+
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.rating").value("Rating must be at least 1"));
+    }
+
+    @Test
+    void returnBadRequestWhenRatingIsTooHigh() throws Exception {
+        String jsonRequest = "{ \"user\": \"Jonas\", \"book\": \"Dune\", \"rating\": 11 }";
+
+        mockMvc.perform(post("/api/reviews")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.rating").value("Rating must be at most 10"));
+    }
 }
